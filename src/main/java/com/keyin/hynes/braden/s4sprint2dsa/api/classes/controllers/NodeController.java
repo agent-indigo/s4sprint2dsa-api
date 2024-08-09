@@ -2,6 +2,7 @@ package com.keyin.hynes.braden.s4sprint2dsa.api.classes.controllers;
 import com.keyin.hynes.braden.s4sprint2dsa.api.classes.services.NodeService;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.Deletes;
 import com.keyin.hynes.braden.s4sprint2dsa.api.classes.entities.NodeEntity;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,9 +26,9 @@ public final class NodeController<T> implements Deletes {
     public List<NodeEntity<T>> getAll() {
         return service.getAll();
     }
-    @GetMapping("/api/nodes/{_id}")
-    public NodeEntity<T> getBy_id(@PathVariable String _id) {
-        return service.getBy_id(_id);
+    @GetMapping("/api/nodes/{id}")
+    public NodeEntity<T> getById(@PathVariable ObjectId id) {
+        return service.getById(id);
     }
     @GetMapping("/api/nodes/{value}")
     public List<NodeEntity<T>> getAllByValue(@PathVariable T value) {
@@ -49,40 +50,40 @@ public final class NodeController<T> implements Deletes {
     public NodeEntity<T> add(@PathVariable NodeEntity<T> node) {
         return service.add(node);
     }
-    @PutMapping("/api/nodes/{_id}")
+    @PutMapping("/api/nodes/{id}")
     public NodeEntity<T> edit(
-        @PathVariable String _id,
+        @PathVariable ObjectId id,
         @RequestBody NodeEntity<T> node
     ) {
-        return service.edit(_id, node);
+        return service.edit(id, node);
     }
-    @PatchMapping("/api/nodes/{_id}/value")
+    @PatchMapping("/api/nodes/{id}/value")
     public NodeEntity<T> editValue(
-        @PathVariable String _id,
+        @PathVariable ObjectId id,
         @RequestBody T value
     ) {
-        return service.editValue(_id, value);
+        return service.editValue(id, value);
     }
-    @PatchMapping("/api/nodes/{_id}/left")
+    @PatchMapping("/api/nodes/{id}/left")
     public NodeEntity<T> editLeft(
-        @PathVariable String _id,
+        @PathVariable ObjectId id,
         @RequestBody NodeEntity<T> left
     ) {
-        return service.editLeft(_id, left);
+        return service.editLeft(id, left);
     }
-    @PatchMapping("/api/nodes/{_id}/right")
+    @PatchMapping("/api/nodes/{id}/right")
     public NodeEntity<T> editRight(
-        @PathVariable String _id,
+        @PathVariable ObjectId id,
         @RequestBody NodeEntity<T> right
     ) {
-        return service.editRight(_id, right);
+        return service.editRight(id, right);
     }
-    @PatchMapping("/api/nodes/{_id}/height")
+    @PatchMapping("/api/nodes/{id}/height")
     public NodeEntity<T> editHeight(
-        @PathVariable String _id,
+        @PathVariable ObjectId id,
         @RequestBody int height
     ) {
-        return service.editHeight(_id, height);
+        return service.editHeight(id, height);
     }
     @Override
     @DeleteMapping("/api/nodes")
@@ -90,9 +91,9 @@ public final class NodeController<T> implements Deletes {
         return service.deleteAll();
     }
     @Override
-    @DeleteMapping("/api/nodes/{_id}")
-    public String deleteBy_id(@PathVariable String _id) {
-        return service.deleteBy_id(_id);
+    @DeleteMapping("/api/nodes/{id}")
+    public String deleteById(@PathVariable ObjectId id) {
+        return service.deleteById(id);
     }
     @DeleteMapping("/api/nodes/{value}")
     public String deleteAllByValue(@PathVariable T value) {

@@ -1,10 +1,11 @@
 package com.keyin.hynes.braden.s4sprint2dsa.api.classes.abstracts;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 public abstract class DataEntity {
     @Id
-    private String _id;
+    private ObjectId id;
     public DataEntity() {}
-    public final String get_id() {
-        return _id;
+    public final ObjectId getId() {
+        return id;
     }
 }

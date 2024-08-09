@@ -2,6 +2,7 @@ package com.keyin.hynes.braden.s4sprint2dsa.api.classes.services;
 import com.keyin.hynes.braden.s4sprint2dsa.api.classes.entities.NodeEntity;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.Deletes;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.repositories.NodeRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -26,13 +27,13 @@ public final class NodeService<T> implements Deletes {
         return repo.findAll();
     }
     /**
-     * @name    getBy_id
+     * @name    getById
      * @desc    Get the node with the given ID
-     * @route   GET /api/nodes/{_id}
+     * @route   GET /api/nodes/{id}
      * @access  public
      */
-    public NodeEntity<T> getBy_id(String _id) {
-        return repo.findById(_id).get();
+    public NodeEntity<T> getById(ObjectId id) {
+        return repo.findById(id).get();
     }
     /**
      * @name    getAllByValue
@@ -82,14 +83,14 @@ public final class NodeService<T> implements Deletes {
     /**
      * @name    edit
      * @desc    Edit a node
-     * @route   PUT /api/nodes/{_id}
+     * @route   PUT /api/nodes/{id}
      * @access  public
      */
     public NodeEntity<T> edit(
-        String _id,
+        ObjectId id,
         NodeEntity<T> node
     ) {
-        this.current = repo.findById(_id).get();
+        this.current = repo.findById(id).get();
         current.setValue(node.getValue());
         current.setLeft(node.getLeft());
         current.setRight(node.getRight());
@@ -99,56 +100,56 @@ public final class NodeService<T> implements Deletes {
     /**
      * @name    editValue
      * @desc    Edit a node's value
-     * @route   PATCH /api/nodes/{_id}/value
+     * @route   PATCH /api/nodes/{id}/value
      * @access  public
      */
     public NodeEntity<T> editValue(
-        String _id,
+        ObjectId id,
         T value
     ) {
-        this.current = repo.findById(_id).get();
+        this.current = repo.findById(id).get();
         current.setValue(value);
         return repo.save(current);
     }
     /**
      * @name    editLeft
      * @desc    Move a node to the right of another node
-     * @route   PATCH /api/nodes/{_id}/left
+     * @route   PATCH /api/nodes/{id}/left
      * @access  public
      */
     public NodeEntity<T> editLeft(
-        String _id,
+        ObjectId id,
         NodeEntity<T> left
     ) {
-        this.current = repo.findById(_id).get();
+        this.current = repo.findById(id).get();
         current.setLeft(left);
         return repo.save(current);
     }
     /**
      * @name    editRight
      * @desc    Move a node to the right of another node
-     * @route   PATCH /api/nodes/{_id}/right
+     * @route   PATCH /api/nodes/{id}/right
      * @access  public
      */
     public NodeEntity<T> editRight(
-        String _id,
+        ObjectId id,
         NodeEntity<T> right
     ) {
-        this.current = repo.findById(_id).get();
+        this.current = repo.findById(id).get();
         current.setRight(right);
         return repo.save(current);
     }
     /**
      * @name    editHeight
      * @desc    Edit a node's height
-     * @route   PATCH /api/nodes/{_id}/height
+     * @route   PATCH /api/nodes/{id}/height
      * @access  public
      */
     public NodeEntity<T> editHeight(
-        String _id,
+        ObjectId id,
         int height
     ) {
-        this.current = repo.findById(_id).get();
+        this.current = repo.findById(id).get();
         current.setHeight(height);
         return repo.save(current);
     }
@@ -164,14 +165,14 @@ public final class NodeService<T> implements Deletes {
         return nodesDeletedMessage;
     }
     /**
-     * @name    deleteBy_id
+     * @name    deleteByid
      * @desc    Delete the node with the given ID
-     * @route   DELETE /api/nodes/{_id}
+     * @route   DELETE /api/nodes/{id}
      * @access  public
      */
     @Override
-    public String deleteBy_id(String _id) {
-        repo.deleteById(_id);
+    public String deleteById(ObjectId id) {
+        repo.deleteById(id);
         return nodeDeletedMessage;
     }
     /**
