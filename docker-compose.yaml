@@ -1,9 +1,9 @@
 version: '3.8'
 services:
-  s4sprint2dsa:
+  s4sprint2dsa.api:
     build:
       context: .
       dockerfile: Dockerfile
-    image: s4sprint2dsa:latest
+    image: s4sprint2dsa.api:latest
     ports:
       - "8080:8080"
