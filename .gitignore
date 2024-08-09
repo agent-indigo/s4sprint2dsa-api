@@ -1,3 +1,4 @@
+.gradle/
 .vscode/
 target/
 .DS_Store
