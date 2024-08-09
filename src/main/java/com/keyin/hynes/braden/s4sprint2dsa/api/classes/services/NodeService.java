@@ -181,8 +181,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public String deleteAllByValue(T value) {
-        repo.deleteAllByValue(value);
-        return nodesDeletedMessage;
+        return repo.deleteAllByValue(value) + " " + nodesDeletedMessage;
     }
     /**
      * @name    deleteByLeft
@@ -211,7 +210,6 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public String deleteAllByHeight(int height) {
-        repo.deleteAllByHeight(height);
-        return nodesDeletedMessage;
+        return repo.deleteAllByHeight(height) + " " + nodesDeletedMessage;
     }
 }
