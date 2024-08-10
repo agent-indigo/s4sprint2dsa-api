@@ -2,6 +2,7 @@ package com.keyin.hynes.braden.s4sprint2dsa.api.classes.entities;
 import com.keyin.hynes.braden.s4sprint2dsa.api.classes.abstracts.DataEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Queue;
+import java.util.List;
 import java.util.LinkedList;
 @Document
 public final class TreeEntity<T> extends DataEntity {
@@ -9,80 +10,81 @@ public final class TreeEntity<T> extends DataEntity {
     private NodeEntity<T> current;
     private NodeEntity<T> previous;
     private NodeEntity<T> newNode;
+    private List<NodeEntity<T>> nodes;
     private Queue<NodeEntity<T>> queue;
-    private String traversalFormat;
-    private String insertionMessage;
+    private String nodeInsertedMessage;
+    private String nodeDeletedMessage;
+    private String result;
     public TreeEntity() {
         this.root = new NodeEntity<T>();
         this.newNode = new NodeEntity<T>();
         this.queue = new LinkedList<NodeEntity<T>>();
-        this.traversalFormat = "%s\n";
-        this.insertionMessage = "Node inserted.";
+        this.nodeInsertedMessage = "Node inserted.";
+        this.nodeDeletedMessage = "Node deleted.";
+        this.result = "Error";
         queue.add(root);
     }
-    public void traversePreOrder(NodeEntity<T> node) {
-        if (node == null) {
-            return;
-        } else {
-            System.out.printf(traversalFormat, node.getValue().toString());
+    public List<NodeEntity<T>> traversePreOrder(NodeEntity<T> node) {
+        if (node != null) {
+            nodes.add(node);
             traversePreOrder(node.getLeft());
             traversePreOrder(node.getRight());
         }
+        return nodes;
     }
-    public void traverseInOrder(NodeEntity<T> node) {
-        if (node == null) {
-            return;
-        } else {
+    public List<NodeEntity<T>> traverseInOrder(NodeEntity<T> node) {
+        if (node != null) {
             traverseInOrder(node.getLeft());
-            System.out.printf(traversalFormat, node.getValue().toString());
+            nodes.add(node);
             traverseInOrder(node.getRight());
         }
+        return nodes;
     }
-    public void traversePostOrder(NodeEntity<T> node) {
-        if (node == null) {
-            return;
-        } else {
+    public List<NodeEntity<T>> traversePostOrder(NodeEntity<T> node) {
+        if (node != null) {
             traversePostOrder(node.getLeft());
             traversePostOrder(node.getRight());
-            System.out.printf(traversalFormat, node.getValue().toString());
+            nodes.add(node);
         }
+        return nodes;
     }
-    public void traverseLevelOrder() {
+    public List<NodeEntity<T>> traverseLevelOrder() {
         while (!queue.isEmpty()) {
             this.current = queue.remove();
-            System.out.printf(traversalFormat, current.getValue().toString());
+            nodes.add(current);
             if (current.getLeft() != null) queue.add(current.getLeft());
             if (current.getRight() != null) queue.add(current.getRight());
         }
+        return nodes;
     }
-    public void search(T value) {
+    public String search(T value) {
         while (!queue.isEmpty()) {
             this.current = queue.remove();
             if (current.getValue() == value) {
-                System.out.println("Value found.");
+                this.result = "Value found.";
             } else {
-                System.err.println("Value not found.");
+                this.result = "Value not found.";
                 if (current.getLeft() != null) queue.add(current.getLeft());
                 if (current.getRight() != null) queue.add(current.getRight());
             }
         }
+        return result;
     }
-    public void insert(T value) {
+    public String insert(T value) {
         this.newNode.setValue(value);
         if (queue.isEmpty()) {
             queue.add(newNode);
-            System.out.println("Node inserted at root.");
-            return;
+            this.result = nodeInsertedMessage;
         } else {
             while (!queue.isEmpty()) {
                 this.current = queue.remove();
                 if (current.getLeft() == null) {
                     current.setLeft(newNode);
-                    System.out.println(insertionMessage);
+                    this.result = nodeInsertedMessage;
                     break;
                 } else if (current.getRight() == null) {
                     current.setRight(newNode);
-                    System.out.println(insertionMessage);
+                    this.result = nodeInsertedMessage;
                     break;
                 } else {
                     queue.add(current.getLeft());
@@ -90,6 +92,7 @@ public final class TreeEntity<T> extends DataEntity {
                 }
             }
         }
+        return result;
     }
     public NodeEntity<T> getDeepestNode() {
         while (!queue.isEmpty()) {
@@ -99,37 +102,39 @@ public final class TreeEntity<T> extends DataEntity {
         }
         return current;
     }
-    public void deleteDeepestNode() {
+    public String deleteDeepestNode() {
         while (!queue.isEmpty()) {
             this.previous = this.current;
             this.current = queue.remove();
             if (current.getLeft() == null) {
                 previous.setRight(null);
-                return;
+                this.result = nodeDeletedMessage;
             } else if (current.getRight() == null) {
                 current.setLeft(null);
-                return;
+                this.result = nodeDeletedMessage;
             }
             queue.add(current.getLeft());
             queue.add(current.getRight());
         }
+        return result;
     }
-    public void deleteNodeWithValue(T value) {
+    public String deleteNodeWithValue(T value) {
         while (!queue.isEmpty()) {
             this.current = queue.remove();
             if (current.getValue() == value) {
                 current.setValue(getDeepestNode().getValue());
                 deleteDeepestNode();
-                System.out.println("Node deleted.");
+                this.result = nodeDeletedMessage;
             } else {
-                System.err.println("Node not found.");
+                this.result = "Node not found.";
                 if (current.getLeft() != null) queue.add(current.getLeft());
                 if (current.getRight() != null) queue.add(current.getRight());
             }
         }
+        return result;
     }
-    public void deleteTree() {
+    public String deleteTree() {
         this.root = null;
-        System.out.println("Tree deleted.");
+        return "Tree deleted.";
     }
 }
