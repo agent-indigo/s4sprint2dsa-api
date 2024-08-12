@@ -1,5 +1,5 @@
-package com.keyin.hynes.braden.s4sprint2dsa.api.classes.services;
-import com.keyin.hynes.braden.s4sprint2dsa.api.classes.entities.NodeEntity;
+package com.keyin.hynes.braden.s4sprint2dsa.api.services;
+import com.keyin.hynes.braden.s4sprint2dsa.api.entities.NodeEntity;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.Deletes;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.repositories.NodeRepository;
 import org.bson.types.ObjectId;

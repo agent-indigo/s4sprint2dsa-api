@@ -1,4 +1,4 @@
-package com.keyin.hynes.braden.s4sprint2dsa.api.classes.abstracts;
+package com.keyin.hynes.braden.s4sprint2dsa.api.abstracts;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 public abstract class DataEntity {

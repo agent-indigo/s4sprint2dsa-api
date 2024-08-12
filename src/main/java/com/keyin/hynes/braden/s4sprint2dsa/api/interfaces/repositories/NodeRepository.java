@@ -1,5 +1,5 @@
 package com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.repositories;
-import com.keyin.hynes.braden.s4sprint2dsa.api.classes.entities.NodeEntity;
+import com.keyin.hynes.braden.s4sprint2dsa.api.entities.NodeEntity;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

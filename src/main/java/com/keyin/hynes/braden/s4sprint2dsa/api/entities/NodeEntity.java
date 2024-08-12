@@ -1,5 +1,5 @@
-package com.keyin.hynes.braden.s4sprint2dsa.api.classes.entities;
-import com.keyin.hynes.braden.s4sprint2dsa.api.classes.abstracts.DataEntity;
+package com.keyin.hynes.braden.s4sprint2dsa.api.entities;
+import com.keyin.hynes.braden.s4sprint2dsa.api.abstracts.DataEntity;
 import com.mongodb.lang.Nullable;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;

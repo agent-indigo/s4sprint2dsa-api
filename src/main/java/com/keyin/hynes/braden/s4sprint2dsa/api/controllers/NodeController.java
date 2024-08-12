@@ -1,7 +1,7 @@
-package com.keyin.hynes.braden.s4sprint2dsa.api.classes.controllers;
-import com.keyin.hynes.braden.s4sprint2dsa.api.classes.services.NodeService;
+package com.keyin.hynes.braden.s4sprint2dsa.api.controllers;
+import com.keyin.hynes.braden.s4sprint2dsa.api.services.NodeService;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.Deletes;
-import com.keyin.hynes.braden.s4sprint2dsa.api.classes.entities.NodeEntity;
+import com.keyin.hynes.braden.s4sprint2dsa.api.entities.NodeEntity;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
