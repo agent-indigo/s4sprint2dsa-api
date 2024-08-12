@@ -20,7 +20,7 @@ public final class NodeController<T> implements Deletes {
     @Autowired
     private NodeService<T> service;
     public NodeController() {
-        this.service = new NodeService<T>();
+        service = new NodeService<T>();
     }
     @GetMapping("/api/nodes")
     public List<NodeEntity<T>> getAll() {
@@ -43,8 +43,12 @@ public final class NodeController<T> implements Deletes {
         return service.getByRight(right);
     }
     @GetMapping("/api/nodes/{height}")
-    public List<NodeEntity<T>> getByHeight(@PathVariable int height) {
+    public List<NodeEntity<T>> getAllByHeight(@PathVariable int height) {
         return service.getAllByHeight(height);
+    }
+    @GetMapping("/api/nodes/{treeId}")
+    public List<NodeEntity<T>> getAllByTreeId(@PathVariable ObjectId treeId) {
+        return service.getAllByTreeId(treeId);
     }
     @PostMapping("/api/nodes")
     public NodeEntity<T> add(@PathVariable NodeEntity<T> node) {
@@ -110,5 +114,9 @@ public final class NodeController<T> implements Deletes {
     @DeleteMapping("/api/nodes/{height}")
     public String deleteAllByHeight(@PathVariable int height) {
         return service.deleteAllByHeight(height);
+    }
+    @DeleteMapping("/api/nodes/{treeId}")
+    public String deleteAllByTreeId(ObjectId treeId) {
+        return service.deleteAllByTreeId(treeId);
     }
 }

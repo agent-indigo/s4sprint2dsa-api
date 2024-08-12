@@ -16,12 +16,15 @@ public final class TreeEntity<T> extends DataEntity {
     private String nodeDeletedMessage;
     private String result;
     public TreeEntity() {
-        this.root = new NodeEntity<T>();
-        this.newNode = new NodeEntity<T>();
-        this.queue = new LinkedList<NodeEntity<T>>();
-        this.nodeInsertedMessage = "Node inserted.";
-        this.nodeDeletedMessage = "Node deleted.";
-        this.result = "Error";
+        root = new NodeEntity<T>();
+        newNode = new NodeEntity<T>();
+        queue = new LinkedList<NodeEntity<T>>();
+        nodes = new LinkedList<>();
+        nodeInsertedMessage = "Node inserted.";
+        nodeDeletedMessage = "Node deleted.";
+        result = "Error";
+        root.setTreeId(getId());
+        newNode.setTreeId(getId());
         queue.add(root);
     }
     public List<NodeEntity<T>> traversePreOrder(NodeEntity<T> node) {
@@ -50,7 +53,7 @@ public final class TreeEntity<T> extends DataEntity {
     }
     public List<NodeEntity<T>> traverseLevelOrder() {
         while (!queue.isEmpty()) {
-            this.current = queue.remove();
+            current = queue.remove();
             nodes.add(current);
             if (current.getLeft() != null) queue.add(current.getLeft());
             if (current.getRight() != null) queue.add(current.getRight());
@@ -59,32 +62,38 @@ public final class TreeEntity<T> extends DataEntity {
     }
     public String search(T value) {
         while (!queue.isEmpty()) {
-            this.current = queue.remove();
-            if (current.getValue() == value) {
-                this.result = "Value found.";
-            } else {
-                this.result = "Value not found.";
-                if (current.getLeft() != null) queue.add(current.getLeft());
-                if (current.getRight() != null) queue.add(current.getRight());
+            current = queue.remove();
+            if (current.getValue().equals(value)) {
+                result = "Value found.";
+                return result;
             }
+            if (current.getLeft() != null) queue.add(current.getLeft());
+            if (current.getRight() != null) queue.add(current.getRight());
         }
+        result = "Value not found.";
         return result;
     }
     public String insert(T value) {
-        this.newNode.setValue(value);
+        newNode.setValue(value);
+        newNode.setLeft(null);
+        newNode.setRight(null);
+        newNode.setHeight(1); // Assuming height starts from 1 for a new node
+
         if (queue.isEmpty()) {
             queue.add(newNode);
-            this.result = nodeInsertedMessage;
+            result = nodeInsertedMessage;
         } else {
             while (!queue.isEmpty()) {
-                this.current = queue.remove();
+                current = queue.remove();
                 if (current.getLeft() == null) {
                     current.setLeft(newNode);
-                    this.result = nodeInsertedMessage;
+                    updateHeight(current);
+                    result = nodeInsertedMessage;
                     break;
                 } else if (current.getRight() == null) {
                     current.setRight(newNode);
-                    this.result = nodeInsertedMessage;
+                    updateHeight(current);
+                    result = nodeInsertedMessage;
                     break;
                 } else {
                     queue.add(current.getLeft());
@@ -94,9 +103,17 @@ public final class TreeEntity<T> extends DataEntity {
         }
         return result;
     }
+    private void updateHeight(NodeEntity<T> node) {
+        if (node != null) {
+            node.setHeight(Math.max(
+                (node.getLeft() != null) ? node.getLeft().getHeight() : 0,
+                (node.getRight() != null) ? node.getRight().getHeight() : 0
+            ) + 1);
+        }
+    }
     public NodeEntity<T> getDeepestNode() {
         while (!queue.isEmpty()) {
-            this.current = queue.remove();
+            current = queue.remove();
             if (current.getLeft() != null) queue.add(current.getLeft());
             if (current.getRight() != null) queue.add(current.getRight());
         }
@@ -104,37 +121,39 @@ public final class TreeEntity<T> extends DataEntity {
     }
     public String deleteDeepestNode() {
         while (!queue.isEmpty()) {
-            this.previous = this.current;
-            this.current = queue.remove();
+            previous = current;
+            current = queue.remove();
             if (current.getLeft() == null) {
                 previous.setRight(null);
-                this.result = nodeDeletedMessage;
+                result = nodeDeletedMessage;
+                break;
             } else if (current.getRight() == null) {
                 current.setLeft(null);
-                this.result = nodeDeletedMessage;
+                result = nodeDeletedMessage;
+                break;
             }
-            queue.add(current.getLeft());
-            queue.add(current.getRight());
+            if (current.getLeft() != null) queue.add(current.getLeft());
+            if (current.getRight() != null) queue.add(current.getRight());
         }
         return result;
     }
     public String deleteNodeWithValue(T value) {
         while (!queue.isEmpty()) {
-            this.current = queue.remove();
-            if (current.getValue() == value) {
+            current = queue.remove();
+            if (current.getValue().equals(value)) {
                 current.setValue(getDeepestNode().getValue());
                 deleteDeepestNode();
-                this.result = nodeDeletedMessage;
-            } else {
-                this.result = "Node not found.";
-                if (current.getLeft() != null) queue.add(current.getLeft());
-                if (current.getRight() != null) queue.add(current.getRight());
+                result = nodeDeletedMessage;
+                return result;
             }
+            if (current.getLeft() != null) queue.add(current.getLeft());
+            if (current.getRight() != null) queue.add(current.getRight());
         }
+        result = "Node not found.";
         return result;
     }
     public String deleteTree() {
-        this.root = null;
+        root = null;
         return "Tree deleted.";
     }
 }

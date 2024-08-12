@@ -10,8 +10,10 @@ public interface NodeRepository<T> extends MongoRepository<NodeEntity<T>, Object
     NodeEntity<T> findByLeft(NodeEntity<T> left);
     NodeEntity<T> findByRight(NodeEntity<T> right);
     List<NodeEntity<T>> findAllByHeight(int height);
+    List<NodeEntity<T>> findAllByTreeId(ObjectId treeId);
     long deleteAllByValue(T value);
     void deleteByLeft(NodeEntity<T> left);
     void deleteByRight(NodeEntity<T> right);
     long deleteAllByHeight(int height);
+    long deleteAllByTreeId(ObjectId treeId);
 }
