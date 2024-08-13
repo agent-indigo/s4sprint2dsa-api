@@ -2,6 +2,7 @@ package com.keyin.hynes.braden.s4sprint2dsa.api.entities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keyin.hynes.braden.s4sprint2dsa.api.abstracts.DataEntity;
+import com.mongodb.lang.Nullable;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Queue;
@@ -9,16 +10,27 @@ import java.util.List;
 import java.util.LinkedList;
 @Document
 public final class TreeEntity<T> extends DataEntity {
+    @Nullable
     private NodeEntity<T> root;
+    @Nullable
     private NodeEntity<T> current;
+    @Nullable
     private NodeEntity<T> previous;
+    @Nullable
     private NodeEntity<T> newNode;
+    @Nullable
     private List<NodeEntity<T>> nodes;
+    @Nullable
     private Queue<NodeEntity<T>> queue;
+    @Nullable
     private String nodeInsertedMessage;
+    @Nullable
     private String nodeDeletedMessage;
+    @Nullable
     private String result;
+    @Nullable
     private int deleted;
+    @Nullable
     private ObjectMapper objectMapper;
     public TreeEntity() {
         root = new NodeEntity<T>();
