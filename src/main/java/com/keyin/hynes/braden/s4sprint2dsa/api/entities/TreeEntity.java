@@ -36,7 +36,7 @@ public final class TreeEntity<T> extends DataEntity {
         root = new NodeEntity<T>();
         newNode = new NodeEntity<T>();
         queue = new LinkedList<NodeEntity<T>>();
-        nodes = new LinkedList<>();
+        nodes = new LinkedList<NodeEntity<T>>();
         nodeInsertedMessage = "Node inserted.";
         nodeDeletedMessage = "Node deleted.";
         result = "Error";
