@@ -1,7 +1,9 @@
 package com.keyin.hynes.braden.s4sprint2dsa.api.services;
 import com.keyin.hynes.braden.s4sprint2dsa.api.entities.NodeEntity;
+import com.keyin.hynes.braden.s4sprint2dsa.api.entities.TreeEntity;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.Deletes;
 import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.repositories.NodeRepository;
+import com.keyin.hynes.braden.s4sprint2dsa.api.interfaces.repositories.TreeRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +11,9 @@ import java.util.List;
 @Service
 public final class NodeService<T> implements Deletes {
     @Autowired
-    private NodeRepository<T> repo;
+    private NodeRepository<T> nodeRepository;
+    @Autowired
+    private TreeRepository<T> treeRepository;
     private NodeEntity<T> current;
     private String nodeDeletedMessage;
     private String nodesDeletedMessage;
@@ -24,7 +28,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public List<NodeEntity<T>> getAll() {
-        return repo.findAll();
+        return nodeRepository.findAll();
     }
     /**
      * @name    getById
@@ -33,7 +37,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public NodeEntity<T> getById(ObjectId id) {
-        return repo.findById(id).get();
+        return nodeRepository.findById(id).get();
     }
     /**
      * @name    getAllByValue
@@ -42,25 +46,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public List<NodeEntity<T>> getAllByValue(T value) {
-        return repo.findAllByValue(value);
-    }
-    /**
-     * @name    getByLeft
-     * @desc    Get the node to the right of the given node
-     * @route   GET /api/nodes/{left}
-     * @access  public
-     */
-    public NodeEntity<T> getByLeft(NodeEntity<T> left) {
-        return repo.findByLeft(left);
-    }
-    /**
-     * @name    getByRight
-     * @desc    Get the node to the left of the given node
-     * @route   GET /api/nodes/{right}
-     * @access  public
-     */
-    public NodeEntity<T> getByRight(NodeEntity<T> right) {
-        return repo.findByRight(right);
+        return nodeRepository.findAllByValue(value);
     }
     /**
      * @name    getAllByHeight
@@ -69,7 +55,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public List<NodeEntity<T>> getAllByHeight(int height) {
-        return repo.findAllByHeight(height);
+        return nodeRepository.findAllByHeight(height);
     }
     /**
      * @name    getAllByTreeId
@@ -78,7 +64,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public List<NodeEntity<T>> getAllByTreeId(ObjectId treeId) {
-        return repo.findAllByTreeId(treeId);
+        return nodeRepository.findAllByTreeId(treeId);
     }
     /**
      * @name    add
@@ -87,7 +73,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public NodeEntity<T> add(NodeEntity<T> node) {
-        return repo.save(node);
+        return nodeRepository.save(node);
     }
     /**
      * @name    edit
@@ -99,12 +85,12 @@ public final class NodeService<T> implements Deletes {
         ObjectId id,
         NodeEntity<T> node
     ) {
-        current = repo.findById(id).get();
+        current = nodeRepository.findById(id).get();
         current.setValue(node.getValue());
         current.setLeft(node.getLeft());
         current.setRight(node.getRight());
         current.setHeight(node.getHeight());
-        return repo.save(current);
+        return nodeRepository.save(current);
     }
     /**
      * @name    editValue
@@ -116,9 +102,9 @@ public final class NodeService<T> implements Deletes {
         ObjectId id,
         T value
     ) {
-        current = repo.findById(id).get();
+        current = nodeRepository.findById(id).get();
         current.setValue(value);
-        return repo.save(current);
+        return nodeRepository.save(current);
     }
     /**
      * @name    editLeft
@@ -130,9 +116,9 @@ public final class NodeService<T> implements Deletes {
         ObjectId id,
         NodeEntity<T> left
     ) {
-        current = repo.findById(id).get();
+        current = nodeRepository.findById(id).get();
         current.setLeft(left);
-        return repo.save(current);
+        return nodeRepository.save(current);
     }
     /**
      * @name    editRight
@@ -144,9 +130,9 @@ public final class NodeService<T> implements Deletes {
         ObjectId id,
         NodeEntity<T> right
     ) {
-        current = repo.findById(id).get();
+        current = nodeRepository.findById(id).get();
         current.setRight(right);
-        return repo.save(current);
+        return nodeRepository.save(current);
     }
     /**
      * @name    editHeight
@@ -158,9 +144,9 @@ public final class NodeService<T> implements Deletes {
         ObjectId id,
         int height
     ) {
-        current = repo.findById(id).get();
+        current = nodeRepository.findById(id).get();
         current.setHeight(height);
-        return repo.save(current);
+        return nodeRepository.save(current);
     }
     /**
      * @name    deleteAll
@@ -170,7 +156,8 @@ public final class NodeService<T> implements Deletes {
      */
     @Override
     public String deleteAll() {
-        repo.deleteAll();
+        treeRepository.deleteAll();
+        nodeRepository.deleteAll();
         return nodesDeletedMessage;
     }
     /**
@@ -181,7 +168,8 @@ public final class NodeService<T> implements Deletes {
      */
     @Override
     public String deleteById(ObjectId id) {
-        repo.deleteById(id);
+        treeRepository.findById(nodeRepository.findById(id).get().getTreeId()).get().deleteNodeById(id);
+        nodeRepository.deleteById(id);
         return nodeDeletedMessage;
     }
     /**
@@ -191,44 +179,7 @@ public final class NodeService<T> implements Deletes {
      * @access  public
      */
     public String deleteAllByValue(T value) {
-        return repo.deleteAllByValue(value) + " " + nodesDeletedMessage;
-    }
-    /**
-     * @name    deleteByLeft
-     * @desc    Delete the node to the right of the given node
-     * @route   DELETE /api/nodes/{left}
-     * @access  public
-     */
-    public String deleteByLeft(NodeEntity<T> left) {
-        repo.deleteByLeft(left);
-        return nodeDeletedMessage;
-    }
-    /**
-     * @name    deleteByRight
-     * @desc    Delete the node to the left of the given node
-     * @route   DELETE /api/nodes/{right}
-     * @access  public
-     */
-    public String deleteByRight(NodeEntity<T> right) {
-        repo.deleteByRight(right);
-        return nodeDeletedMessage;
-    }
-    /**
-     * @name    deleteAllByHeight
-     * @desc    Delete all nodes of the given height
-     * @route   DELETE /api/nodes/{height}
-     * @access  public
-     */
-    public String deleteAllByHeight(int height) {
-        return repo.deleteAllByHeight(height) + " " + nodesDeletedMessage;
-    }
-    /**
-     * @name    deleteAllByTreeId
-     * @desc    Delete all nodes in the given tree
-     * @route   DELETE /api/nodes/{treeId}
-     * @access  public
-     */
-    public String deleteAllByTreeId(ObjectId treeId) {
-        return repo.deleteAllByTreeId(treeId) + " " + nodesDeletedMessage;
+        for (TreeEntity<T> tree : treeRepository.findAll()) tree.deleteNodesByValue(value);
+        return nodeRepository.deleteAllByValue(value) + " " + nodesDeletedMessage;
     }
 }

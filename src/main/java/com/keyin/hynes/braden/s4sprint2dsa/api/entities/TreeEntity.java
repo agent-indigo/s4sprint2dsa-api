@@ -1,5 +1,8 @@
 package com.keyin.hynes.braden.s4sprint2dsa.api.entities;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keyin.hynes.braden.s4sprint2dsa.api.abstracts.DataEntity;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Queue;
 import java.util.List;
@@ -15,6 +18,8 @@ public final class TreeEntity<T> extends DataEntity {
     private String nodeInsertedMessage;
     private String nodeDeletedMessage;
     private String result;
+    private int deleted;
+    private ObjectMapper objectMapper;
     public TreeEntity() {
         root = new NodeEntity<T>();
         newNode = new NodeEntity<T>();
@@ -23,6 +28,8 @@ public final class TreeEntity<T> extends DataEntity {
         nodeInsertedMessage = "Node inserted.";
         nodeDeletedMessage = "Node deleted.";
         result = "Error";
+        deleted = 0;
+        objectMapper = new ObjectMapper();
         root.setTreeId(getId());
         newNode.setTreeId(getId());
         queue.add(root);
@@ -64,21 +71,22 @@ public final class TreeEntity<T> extends DataEntity {
         while (!queue.isEmpty()) {
             current = queue.remove();
             if (current.getValue().equals(value)) {
-                result = "Value found.";
-                return result;
+                try {
+                    return objectMapper.writeValueAsString(current);
+                } catch (JsonProcessingException jsonProcessingException) {
+                    return jsonProcessingException.getStackTrace().toString();
+                }
             }
             if (current.getLeft() != null) queue.add(current.getLeft());
             if (current.getRight() != null) queue.add(current.getRight());
         }
-        result = "Value not found.";
-        return result;
+        return "Value not found.";
     }
     public String insert(T value) {
         newNode.setValue(value);
         newNode.setLeft(null);
         newNode.setRight(null);
-        newNode.setHeight(1); // Assuming height starts from 1 for a new node
-
+        newNode.setHeight(1);
         if (queue.isEmpty()) {
             queue.add(newNode);
             result = nodeInsertedMessage;
@@ -137,19 +145,30 @@ public final class TreeEntity<T> extends DataEntity {
         }
         return result;
     }
-    public String deleteNodeWithValue(T value) {
+    public String deleteNodesByValue(T value) {
         while (!queue.isEmpty()) {
             current = queue.remove();
             if (current.getValue().equals(value)) {
                 current.setValue(getDeepestNode().getValue());
                 deleteDeepestNode();
-                result = nodeDeletedMessage;
-                return result;
+                deleted++;
             }
             if (current.getLeft() != null) queue.add(current.getLeft());
             if (current.getRight() != null) queue.add(current.getRight());
         }
-        result = "Node not found.";
+        return deleted + " nodes deleted.";
+    }
+    public String deleteNodeById(ObjectId id) {
+        while (!queue.isEmpty()) {
+            current = queue.remove();
+            if (current.getId() == id) {
+                current.setValue(getDeepestNode().getValue());
+                deleteDeepestNode();
+                result = nodeDeletedMessage;
+            }
+            if (current.getLeft() != null) queue.add(current.getLeft());
+            if (current.getRight() != null) queue.add(current.getRight());
+        }
         return result;
     }
     public String deleteTree() {
